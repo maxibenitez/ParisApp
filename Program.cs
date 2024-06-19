@@ -5,6 +5,7 @@ using ParisApp.DataAccess.DisciplineRepository;
 using ParisApp.DataAccess.EventRepository;
 using ParisApp.DataAccess.PersonRepository;
 using ParisApp.DataAccess.ScoreRepository;
+using ParisApp.Helpers;
 using ParisApp.Services.DisciplineService;
 using ParisApp.Services.EventService;
 using ParisApp.Services.PersonService;

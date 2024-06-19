@@ -36,7 +36,13 @@ namespace ParisApp.Services.EventService
         public async Task<EventDTO> GetEvent(int id)
         {
             Event eventObj = await _eventRepo.GetEvent(id);
-            return await BuildEventDTO(eventObj);
+
+            EventDTOBuilder builder = new EventDTOBuilder(eventObj, _disciplineRepo);
+            builder = builder.AddLocationDTO(await _eventRepo.GetLocation(eventObj.IdLocation));
+            builder = builder.AddCategoryDTO(await _categoryRepo.GetCategory(eventObj.IdCategory));
+            builder = await builder.AddAthletesDTO(await _personRepo.GetEventAthletes(eventObj.Id));
+
+            return builder.Build();
         }
 
         public async Task<List<EventDTO>> GetEvents()
@@ -47,103 +53,15 @@ namespace ParisApp.Services.EventService
 
             foreach (Event eventObj in events)
             {
-                eventsDTO.Add(await BuildEventDTO(eventObj));
+                EventDTOBuilder builder = new EventDTOBuilder(eventObj, _disciplineRepo);
+                builder = builder.AddLocationDTO(await _eventRepo.GetLocation(eventObj.IdLocation));
+                builder = builder.AddCategoryDTO(await _categoryRepo.GetCategory(eventObj.IdCategory));
+                builder = await builder.AddAthletesDTO(await _personRepo.GetEventAthletes(eventObj.Id));
+
+                eventsDTO.Add(builder.Build());
             }
 
             return eventsDTO;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private async Task<EventDTO> BuildEventDTO(Event eventObj)
-        {
-            Location location = await _eventRepo.GetLocation(eventObj.IdLocation);
-            Category category = await _categoryRepo.GetCategory(eventObj.IdCategory);
-            List<Person> persons = await _personRepo.GetEventAthletes(eventObj.Id);
-            List<PersonDTO> athletes = await BuildPersonDTOs(persons);
-
-            EventDTO eventDTO = EventDTOBuilder(eventObj);
-            eventDTO.Location = LocationDTOBuilder(location);
-            eventDTO.Category = CategoryDTOBuilder(category);
-            eventDTO.Athletes = athletes;
-
-            return eventDTO;
-        }
-
-        private async Task<List<PersonDTO>> BuildPersonDTOs(List<Person> persons)
-        {
-            List<PersonDTO> personsDTO = new List<PersonDTO>();
-
-            foreach (Person person in persons)
-            {
-                Discipline discipline = await _disciplineRepo.GetDisciplineById(person.IdDiscipline);
-                PersonFactory personFactory = new PersonFactory();
-                PersonDTO personDTO = personFactory.CreatePersonDTO(person);
-
-                if (personDTO is AthleteDTO athleteDTO)
-                {
-                    athleteDTO.Discipline = DisciplineDTOBuilder(discipline);
-                }
-                else if (personDTO is JudgeDTO judgeDTO)
-                {
-                    judgeDTO.Discipline = DisciplineDTOBuilder(discipline);
-                }
-
-                personsDTO.Add(personDTO);
-            }
-
-            return personsDTO;
-        }
-
-        private EventDTO EventDTOBuilder(Event eventObj)
-        {
-            EventDTO eventDTO = new EventDTO
-            {
-                Id = eventObj.Id,
-                Date = eventObj.Date,
-                Genre = eventObj.Genre,
-            };
-
-            return eventDTO;
-        }
-
-        private LocationDTO LocationDTOBuilder(Location location)
-        {
-            LocationDTO locationDTO = new LocationDTO
-            {
-                Id = location.Id,
-                Name = location.Name,
-                Description = location.Description,
-                Address = location.Address,
-            };
-
-            return locationDTO;
-        }
-
-        private DisciplineDTO DisciplineDTOBuilder(Discipline discipline)
-        {
-            DisciplineDTO disciplineDTO = new DisciplineDTO
-            {
-                Id = discipline.Id,
-                Name = discipline.Name,
-                Description = discipline.Description,
-            };
-
-            return disciplineDTO;
-        }
-
-        private CategoryDTO CategoryDTOBuilder(Category category)
-        {
-            CategoryDTO categoryDTO = new CategoryDTO
-            {
-                Id = category.Id,
-                Name = category.Name,
-                Description = category.Description,
-            };
-
-            return categoryDTO;
         }
 
         #endregion

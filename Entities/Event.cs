@@ -8,6 +8,6 @@
         public int IdCategory { get; set; }
         public DateTime Date { get; set; }
         public string Genre { get; set; }
-        public int IdPlace { get; set; }
+        public int IdLocation { get; set; }
     }
 }

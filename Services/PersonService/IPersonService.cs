@@ -1,9 +1,9 @@
-﻿using ParisApp.Entities;
+﻿using ParisApp.DTOs;
 
 namespace ParisApp.Services.PersonService
 {
     public interface IPersonService
     {
-        Task<Person> GetPerson(int id);
+        Task<PersonDTO> GetPerson(int id);
     }
 }

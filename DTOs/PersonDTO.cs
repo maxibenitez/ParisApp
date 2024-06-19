@@ -1,14 +1,13 @@
-﻿namespace ParisApp.Entities
+﻿namespace ParisApp.DTOs
 {
-    public class Person
+    public abstract class PersonDTO : IPersonDTO
     {
         public int Id { get; set; }
         public string Identification { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public DateTime BirthDate { get; set; }
+        public string BirthDate { get; set; }
         public string Country { get; set; }
-        public int IdDiscipline { get; set; }
         public string Type { get; set; }
     }
 }

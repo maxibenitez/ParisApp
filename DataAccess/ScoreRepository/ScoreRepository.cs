@@ -28,7 +28,11 @@ namespace ParisApp.DataAccess.ScoreRepository
             {
                 connection.Open();
 
-                using (var command = new MySqlCommand(" ", (MySqlConnection)connection))
+                string query = @"
+                    INSERT INTO Scores (AthleteId, JudgeId, Score) 
+                    VALUES (@AthleteId, @JudgeId, @Score)";
+
+                using (var command = new MySqlCommand(query, (MySqlConnection)connection))
                 {
                     command.Parameters.AddWithValue("@AthleteId", parameters.AthleteId);
                     command.Parameters.AddWithValue("@JudgeId", parameters.JudgeId);

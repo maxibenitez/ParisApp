@@ -1,4 +1,6 @@
 using ParisApp;
+using ParisApp.DataAccess.CategoryRepository;
+using ParisApp.DataAccess.CompetitionRepository;
 using ParisApp.DataAccess.DisciplineRepository;
 using ParisApp.DataAccess.EventRepository;
 using ParisApp.DataAccess.PersonRepository;
@@ -19,6 +21,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<DBConnection>();
 
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICompetitionRepository, CompetitionRepository>();
 builder.Services.AddScoped<IDisciplineRepository, DisciplineRepository>();
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();

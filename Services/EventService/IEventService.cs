@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ParisApp.Entities;
+﻿using ParisApp.DTOs;
 
 namespace ParisApp.Services.EventService
 {
     public interface IEventService
     {
-        Task<Event> GetEvent(int id);
-        Task<IEnumerable<Event>> GetEvents();
+        Task<EventDTO> GetEvent(int id);
+        Task<List<EventDTO>> GetEvents();
     }
 }

@@ -28,9 +28,5 @@ namespace ParisApp.Services.ScoreService
         }
 
         #endregion
-
-        #region Private Methods
-
-        #endregion
     }
 }

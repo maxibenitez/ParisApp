@@ -25,7 +25,7 @@ namespace ParisApp.Controllers
         [HttpGet("get-disciplines")]
         public async Task<IActionResult> GetDisciplines()
         {
-            throw new NotImplementedException();
+            return Ok(await _discilpineServ.GetDisciplines());
         }
     }
 }

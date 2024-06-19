@@ -2,9 +2,9 @@
 using ParisApp.Entities;
 using System.Data;
 
-namespace ParisApp.DataAccess.DisciplineRepository
+namespace ParisApp.DataAccess.CategoryRepository
 {
-    public class DisciplineRepository : IDisciplineRepository
+    public class CategoryRepository : ICategoryRepository
     {
         #region Properties
 
@@ -14,7 +14,7 @@ namespace ParisApp.DataAccess.DisciplineRepository
 
         #region Builders
 
-        public DisciplineRepository(DBConnection db)
+        public CategoryRepository(DBConnection db)
         {
             _db = db;
         }
@@ -23,40 +23,42 @@ namespace ParisApp.DataAccess.DisciplineRepository
 
         #region Implementation
 
-        public async Task<List<Discipline>> GetDisciplines()
+        public async Task<List<Category>> GetCategoriesByCompetition(int id)
         {
-            List<Discipline> disciplines = new List<Discipline>();
+            List<Category> categories = new List<Category>();
 
             using (var connection = _db.CreateConnection())
             {
                 connection.Open();
 
-                string query = "SELECT * FROM Disciplines";
+                string query = @"SELECT * FROM Categories WHERE IdCompetition = @Id";
 
                 using (var command = new MySqlCommand(query, (MySqlConnection)connection))
                 {
+                    command.Parameters.AddWithValue("@Id", id);
+
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
-                            disciplines.Add(DisciplineBuilder(reader));
+                            categories.Add(CategoryBuilder(reader));
                         }
                     }
                 }
             }
 
-            return disciplines;
+            return categories;
         }
 
-        public async Task<Discipline> GetDisciplineById(int id)
+        public async Task<Category> GetCategory(int id)
         {
-            Discipline discipline = new Discipline();
+            Category category = new Category();
 
             using (var connection = _db.CreateConnection())
             {
                 connection.Open();
 
-                string query = @"SELECT * FROM Disciplines WHERE Id = @Id";
+                string query = @"SELECT * FROM Events WHERE Id = @Id";
 
                 using (var command = new MySqlCommand(query, (MySqlConnection)connection))
                 {
@@ -66,29 +68,30 @@ namespace ParisApp.DataAccess.DisciplineRepository
                     {
                         if (await reader.ReadAsync())
                         {
-                            discipline = DisciplineBuilder(reader);
+                            category = CategoryBuilder(reader);
                         }
                     }
                 }
             }
 
-            return discipline;
+            return category;
         }
 
         #endregion
 
         #region Private Methods
 
-        private Discipline DisciplineBuilder(IDataReader reader)
+        private Category CategoryBuilder(IDataReader reader)
         {
-            Discipline discipline = new Discipline
+            Category category = new Category
             {
                 Id = (int)reader["Id"],
                 Name = (string)reader["Name"],
                 Description = (string)reader["Description"],
+                IdCompetition = (int)reader["IdCompetition"],
             };
 
-            return discipline;
+            return category;
         }
 
         #endregion

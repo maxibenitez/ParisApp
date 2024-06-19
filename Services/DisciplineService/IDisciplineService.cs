@@ -1,9 +1,9 @@
-﻿using ParisApp.Entities;
+﻿using ParisApp.DTOs;
 
 namespace ParisApp.Services.DisciplineService
 {
     public interface IDisciplineService
     {
-        Task<IEnumerable<Discipline>> GetDisciplines();
+        Task<List<DisciplineDTO>> GetDisciplines();
     }
 }

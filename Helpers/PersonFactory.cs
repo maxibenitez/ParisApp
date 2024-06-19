@@ -1,46 +1,44 @@
-﻿using ParisApp.Entities;
-using System.Data;
+﻿using ParisApp.DTOs;
+using ParisApp.Entities;
 
 namespace ParisApp.Helpers
 {
-    public static class PersonFactory
+    public class PersonFactory
     {
-        public static Person CreatePerson(IDataReader reader)
+        public PersonDTO CreatePersonDTO(Person person)
         {
-            string personType = (string)reader["PersonType"];
-
-            Person person;
-            if (personType == "Athlete")
+            if (person == null)
             {
-                person = new Athlete();
+                return null;
             }
-            else if (personType == "Judge")
+            if (person.Type.Equals("Athlete"))
             {
-                person = new Judge();
+                return new AthleteDTO
+                {
+                    Id = person.Id,
+                    Identification = person.Identification,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName,
+                    BirthDate = person.BirthDate.ToString("dd/MM/yyyy"),
+                    Country = person.Country,
+                    Type = person.Type,
+                };
             }
-            else
+            else if (person.Type.Equals("Judge"))
             {
-                throw new Exception("Invalid person type");
+                return new JudgeDTO
+                {
+                    Id = person.Id,
+                    Identification = person.Identification,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName,
+                    BirthDate = person.BirthDate.ToString("dd/MM/yyyy"),
+                    Country = person.Country,
+                    Type = person.Type,
+                };
             }
 
-            person.Id = (int)reader["Id"];
-            person.Identification = (string)reader["Identification"];
-            person.FirstName = (string)reader["FirstName"];
-            person.LastName = (string)reader["LastName"];
-            person.BirthDate = (DateTime)reader["BirthDate"];
-            person.Country = (string)reader["Country"];
-            person.Age = CalculateAge((DateTime)reader["BirthDate"]);
-
-            return person;
-        }
-
-        private static int CalculateAge(DateTime birthDate)
-        {
-            var today = DateTime.Today;
-            var age = today.Year - birthDate.Year;
-            if (birthDate.Date > today.AddYears(-age)) age--;
-
-            return age;
+            return null;
         }
     }
 }

@@ -25,13 +25,13 @@ namespace ParisApp.Controllers
         [HttpGet("get-event/{id}")]
         public async Task<IActionResult> GetEvent(int id)
         {
-            return Ok();
+            return Ok(await _eventServ.GetEvent(id));
         }
 
         [HttpGet("get-events")]
         public async Task<IActionResult> GetEvents()
         {
-            return Ok();
+            return Ok(await _eventServ.GetEvents());
         }
     }
 }

@@ -4,6 +4,7 @@ namespace ParisApp.DataAccess.DisciplineRepository
 {
     public interface IDisciplineRepository
     {
-        Task<IEnumerable<Discipline>> GetDisciplines();
+        Task<List<Discipline>> GetDisciplines();
+        Task<Discipline> GetDisciplineById(int id);
     }
 }

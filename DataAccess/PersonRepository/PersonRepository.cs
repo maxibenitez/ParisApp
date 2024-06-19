@@ -62,6 +62,8 @@ namespace ParisApp.DataAccess.PersonRepository
 
                 using (var command = new MySqlCommand(query, (MySqlConnection)connection))
                 {
+                    command.Parameters.AddWithValue("@Id", id);
+
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())

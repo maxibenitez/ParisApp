@@ -26,14 +26,19 @@ namespace ParisApp.Controllers
         [HttpPost("insert-score")]
         public async Task<IActionResult> InsertScore(InsertScoreParameters parameters)
         {
-            if (await _scoreServ.InsertScore(parameters))
+            if (ModelState.IsValid)
             {
-                return Ok();
+                if (await _scoreServ.InsertScore(parameters))
+                {
+                    return Ok("Score successfully inserted");
+                }
+                else
+                {
+                    return BadRequest("Oops... an error occurred");
+                }
             }
-            else
-            {
-                return BadRequest();
-            }
+
+            return BadRequest();
         }
     }
 }

@@ -58,7 +58,7 @@ namespace ParisApp.DataAccess.CategoryRepository
             {
                 connection.Open();
 
-                string query = @"SELECT * FROM Events WHERE Id = @Id";
+                string query = @"SELECT * FROM Categories WHERE Id = @Id";
 
                 using (var command = new MySqlCommand(query, (MySqlConnection)connection))
                 {

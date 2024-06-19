@@ -83,7 +83,7 @@ namespace ParisApp.DataAccess.EventRepository
             {
                 connection.Open();
 
-                string query = @"SELECT * FROM Events WHERE Id = @Id";
+                string query = @"SELECT * FROM Locations WHERE Id = @Id";
 
                 using (var command = new MySqlCommand(query, (MySqlConnection)connection))
                 {

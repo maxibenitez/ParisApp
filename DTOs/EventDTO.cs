@@ -7,6 +7,6 @@
         public DateTime Date { get; set; }
         public string Genre { get; set; }
         public LocationDTO Location { get; set; }
-        public List<AthleteDTO> Athletes { get; set; }
+        public List<PersonDTO> Athletes { get; set; }
     }
 }

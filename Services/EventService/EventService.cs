@@ -1,8 +1,10 @@
 ﻿using ParisApp.DataAccess.CategoryRepository;
+using ParisApp.DataAccess.DisciplineRepository;
 using ParisApp.DataAccess.EventRepository;
 using ParisApp.DataAccess.PersonRepository;
 using ParisApp.DTOs;
 using ParisApp.Entities;
+using ParisApp.Helpers;
 
 namespace ParisApp.Services.EventService
 {
@@ -13,16 +15,18 @@ namespace ParisApp.Services.EventService
         private readonly IEventRepository _eventRepo;
         private readonly ICategoryRepository _categoryRepo;
         private readonly IPersonRepository _personRepo;
+        private readonly IDisciplineRepository _disciplineRepo;
 
         #endregion
 
         #region Builders
 
-        public EventService(IEventRepository eventRepo, IPersonRepository personRepo, ICategoryRepository categoryRepo)
+        public EventService(IEventRepository eventRepo, IPersonRepository personRepo, ICategoryRepository categoryRepo, IDisciplineRepository disciplineRepo)
         {
             _eventRepo = eventRepo;
             _personRepo = personRepo;
             _categoryRepo = categoryRepo;
+            _disciplineRepo = disciplineRepo;
         }
 
         #endregion
@@ -39,11 +43,26 @@ namespace ParisApp.Services.EventService
 
             List<Person> persons = await _personRepo.GetEventAthletes(eventObj.Id);
 
-            List<AthleteDTO> athletes = new List<AthleteDTO>();
+            List<PersonDTO> athletes = new List<PersonDTO>();
+
+            PersonFactory personFactory = new PersonFactory();
 
             foreach (Person person in persons) 
             {
-                
+                Discipline discipline = await _disciplineRepo.GetDisciplineById(person.IdDiscipline);
+
+                PersonDTO personDTO = personFactory.CreatePersonDTO(person);
+
+                if (personDTO is AthleteDTO athleteDTO)
+                {
+                    athleteDTO.Discipline = DisciplineDTOBuilder(discipline);
+                }
+                else if (personDTO is JudgeDTO judgeDTO)
+                {
+                    judgeDTO.Discipline = DisciplineDTOBuilder(discipline);
+                }
+
+                athletes.Add(personDTO);
             }
 
             EventDTO eventDTO = EventDTOBuilder(eventObj);
@@ -89,6 +108,18 @@ namespace ParisApp.Services.EventService
             };
 
             return locationDTO;
+        }
+
+        private DisciplineDTO DisciplineDTOBuilder(Discipline discipline)
+        {
+            DisciplineDTO disciplineDTO = new DisciplineDTO
+            {
+                Id = discipline.Id,
+                Name = discipline.Name,
+                Description = discipline.Description,
+            };
+
+            return disciplineDTO;
         }
 
         private CategoryDTO CategoryDTOBuilder(Category category)

@@ -2,8 +2,9 @@
 {
     public class InsertScoreParameters
     {
-        public int AthleteId { get; set; }
-        public int JudgeId { get; set; }
-        public int Score { get; set; }
+        public int IdEvent { get; set; }
+        public int IdAthlete { get; set; }
+        public int IdJudge { get; set; }
+        public double Score { get; set; }
     }
 }

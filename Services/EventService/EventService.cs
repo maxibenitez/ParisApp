@@ -36,21 +36,50 @@ namespace ParisApp.Services.EventService
         public async Task<EventDTO> GetEvent(int id)
         {
             Event eventObj = await _eventRepo.GetEvent(id);
+            return await BuildEventDTO(eventObj);
+        }
 
+        public async Task<List<EventDTO>> GetEvents()
+        {
+            List<Event> events = await _eventRepo.GetEvents();
+            
+            List<EventDTO> eventsDTO = new List<EventDTO>();
+
+            foreach (Event eventObj in events)
+            {
+                eventsDTO.Add(await BuildEventDTO(eventObj));
+            }
+
+            return eventsDTO;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private async Task<EventDTO> BuildEventDTO(Event eventObj)
+        {
             Location location = await _eventRepo.GetLocation(eventObj.IdLocation);
-
             Category category = await _categoryRepo.GetCategory(eventObj.IdCategory);
-
             List<Person> persons = await _personRepo.GetEventAthletes(eventObj.Id);
+            List<PersonDTO> athletes = await BuildPersonDTOs(persons);
 
-            List<PersonDTO> athletes = new List<PersonDTO>();
+            EventDTO eventDTO = EventDTOBuilder(eventObj);
+            eventDTO.Location = LocationDTOBuilder(location);
+            eventDTO.Category = CategoryDTOBuilder(category);
+            eventDTO.Athletes = athletes;
 
-            PersonFactory personFactory = new PersonFactory();
+            return eventDTO;
+        }
 
-            foreach (Person person in persons) 
+        private async Task<List<PersonDTO>> BuildPersonDTOs(List<Person> persons)
+        {
+            List<PersonDTO> personsDTO = new List<PersonDTO>();
+
+            foreach (Person person in persons)
             {
                 Discipline discipline = await _disciplineRepo.GetDisciplineById(person.IdDiscipline);
-
+                PersonFactory personFactory = new PersonFactory();
                 PersonDTO personDTO = personFactory.CreatePersonDTO(person);
 
                 if (personDTO is AthleteDTO athleteDTO)
@@ -62,28 +91,11 @@ namespace ParisApp.Services.EventService
                     judgeDTO.Discipline = DisciplineDTOBuilder(discipline);
                 }
 
-                athletes.Add(personDTO);
+                personsDTO.Add(personDTO);
             }
 
-            EventDTO eventDTO = EventDTOBuilder(eventObj);
-
-            eventDTO.Location = LocationDTOBuilder(location);
-            eventDTO.Category = CategoryDTOBuilder(category);
-            eventDTO.Athletes = athletes;
-
-            return eventDTO;
+            return personsDTO;
         }
-
-        public async Task<List<EventDTO>> GetEvents()
-        { 
-            List<Event> events = await _eventRepo.GetEvents();
-
-            throw new NotImplementedException(); 
-        }
-
-        #endregion
-
-        #region Private Methods
 
         private EventDTO EventDTOBuilder(Event eventObj)
         {

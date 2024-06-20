@@ -56,7 +56,6 @@ namespace ParisApp.Services.EventService
                 EventDTOBuilder builder = new EventDTOBuilder(eventObj, _disciplineRepo);
                 builder = builder.AddLocationDTO(await _eventRepo.GetLocation(eventObj.IdLocation));
                 builder = builder.AddCategoryDTO(await _categoryRepo.GetCategory(eventObj.IdCategory));
-                builder = await builder.AddAthletesDTO(await _personRepo.GetEventAthletes(eventObj.Id));
 
                 eventsDTO.Add(builder.Build());
             }
